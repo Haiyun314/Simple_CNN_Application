@@ -3,7 +3,7 @@ import numpy as np
 import os 
 import cv2
 
-class My_Net():
+class My_Net:
     def __init__(self, layers, shape) -> None:
         self.number_of_layers = layers
         self.input_layer = tf.keras.Input(shape= shape)
@@ -12,8 +12,9 @@ class My_Net():
         # cnn unit
         nw = tf.keras.layers.Conv2D(16, kernel_size=(5, 5), activation='relu')(self.input_layer)
         for i in range(self.number_of_layers):
-            nw = tf.keras.layers.AvgPool2D(pool_size= (3, 3), strides= 2)(nw)
             nw = tf.keras.layers.Conv2D(max(16 - i *4, 4), kernel_size=(5, 5), activation='relu')(nw)
+            nw = tf.keras.layers.AvgPool2D(pool_size= (3, 3), strides= 2)(nw)
+
         # dnn unit
         nw = tf.keras.layers.Flatten()(nw)
         for i in range(self.number_of_layers):
@@ -30,6 +31,7 @@ def visual_label(*args):
     use this method to test if the points were correctlly generated
     args : image, points
     """
+    assert len(args) <= 2, 'too many variables'
     import matplotlib.pyplot as plt
     _points = np.array(args[1])
     plt.imshow(args[0])
@@ -80,7 +82,7 @@ class Data_Process:
         """ scaling the coordinates to align with resized image
 
         Returns:
-            N*4*2 matrix: scaled output
+            N*8 matrix: scaled output
         """
         import pandas as pd
         import ast
